@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Florilegium</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="home-bg">
+
+  <!-- Garden layer — no inline styles, CSS handles layout -->
+  <div id="gardenContainer"></div>
+
+  <!-- Content container — explicitly above garden -->
+  <div class="container" style="position: relative; z-index: 2;">
+    <h1>a garden of poetic trace</h1>
+    <p>A poet's ability to feel is a rare artifact. Each poem here takes the form of a bloom of emotion, guided by a three-word prompt toward an emerging feeling. Each flower contributes to the creation of a collective map of human expression. This is a space where language and emotions intersect with quiet blooms keeping visual poetry alive.</p>
+
+    <!-- onclick defined inline AND as a fallback href so mobile tap always works -->
+    <button onclick="window.location.href='create.html'">Enter the Garden</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

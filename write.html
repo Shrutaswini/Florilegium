@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Write</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+
+  <!-- ADD THESE TWO — order matters, html2canvas before your script -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    <h2 id="emotion">Emotion: </h2>
+    <p id="prompt">Prompt: </p>
+    <p1>Make sure your poem has atleast 15 words, 3 lines and the prompt words for creating the flower for the garden!</p1>
+
+    <textarea id="poem" rows="10" cols="40" placeholder="Write your poem..."></textarea>
+    <br><br>
+    <button onclick="validatePoem()">Generate a flower for the garden</button>
+    <p id="message"></p>
+  </div>
+    <div id="gardenContainer" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Florilegium Card</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@500&display=swap" 
+rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+
+
+  <style>
+
+    /* ── Page wrapper ── */
+    .card-page-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 80px;
+    }
+
+    /* ── Info container ── */
+    .container {
+      background: rgba(255,255,255,0.92) !important;
+      max-width: 560px;
+      width: 100%;
+      padding: 32px 36px;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      margin: 0 0 0 0;
+    }
+    .container h2 { font-size: 17px; line-height: 1.6; margin-bottom: 18px; }
+
+    .card {
+      background: rgba(255,255,255,0.98);
+      border: 1px solid rgba(107,142,107,0.25);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .card p  { margin: 3px 0; font-size: 13px; color: #5a6e4a; }
+    #cardPoem {
+      font-family: 'Playfair Display', serif;
+      white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.8;
+      color: #2f3e2f;
+      margin-top: 10px;
+    }
+
+    #gardenMessage { font-size: 15px; color: #4a6741; margin: 10px 0 4px; }
+    #fragment {
+      font-family: 'Dancing Script', cursive;
+      font-size: 14px;
+      color: #7a9e7a;
+      margin-bottom: 14px;
+    }
+
+    /* ── Garden section ── */
+    #gardenSection { width: 100%; max-width: 700px; margin-top: 40px; }
+    #gardenSection h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 19px;
+      color: #3b4a2f;
+      margin-bottom: 16px;
+      text-align: center;
+      letter-spacing: 0.03em;
+    }
+    #gardenSection #gardenContainer {
+      display: grid !important;
+      position: static !important;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 24px;
+      background: rgba(255,255,255,0.86);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+      min-height: 160px;
+      align-items: start;
+    }
+
+    /* ── Overlay ── */
+    #cardOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.52);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;        /* align top so popup scrolls on small screens */
+      padding: 24px 16px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    #cardOverlay.hidden { display: none !important; }
+
+    /* ── Popup wrapper ── */
+    #cardPopup {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      border-radius: 25px;
+      animation: popBloom 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      /* no overflow:hidden — that clips the close button */
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* ── Close button — lives on #cardPopup, never inside #cardDesign ── */
+    .closeBtn {
+      position: absolute;
+      top: -16px;
+      right: -4px;             /* inside max-width on mobile */
+      background: #fff;
+      border-radius: 50%;
+      border: none;
+      width: 36px;
+      height: 36px;
+      font-size: 20px;
+      line-height: 36px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.22);
+      z-index: 20;
+      padding: 0;
+      color: #3b4a2f;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .closeBtn:hover { background: #fde8e8; transform: scale(1.1) rotate(8deg); }
+
+    /* ── THE CARD — fixed rule overrides global CSS ── */
+    #cardDesign {
+      position: relative !important;
+      width: 100% !important;           /* fluid on mobile */
+      max-width: 380px !important;
+      height: 540px !important;
+      border-radius: 22px !important;
+      overflow: hidden !important;
+      box-shadow: 0 14px 44px rgba(0,0,0,0.28) !important;
+    }
+
+    /* Background image — top-aligned so stamp in top-right is NEVER cropped */
+    #cardBg {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: top right !important;   /* ← key: stamp lives top-right */
+      z-index: 0 !important;
+    }
+
+    /* Readable gradient over floral bg */
+    #cardDesign::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        170deg,
+        rgba(255,255,255,0.04) 0%,
+        rgba(255,255,255,0.48) 28%,
+        rgba(255,255,255,0.80) 100%
+      );
+      z-index: 1;
+    }
+
+    /* Poem text */
+    #popupPoem {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 2 !important;
+      padding: 52px 32px 32px !important;
+      color: #2a3820 !important;
+      font-family: 'Playfair Display', serif !important;
+      font-size: 13.5px !important;
+      line-height: 1.9 !important;
+      white-space: pre-wrap !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+      overflow: hidden !important;
+      /* reset any inherited position:relative from global */
+      top: unset !important; left: unset !important;
+    }
+
+    /* ── Flower token ── */
+    #flowerToken {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    #flowerTokenImg {
+      width: 90px; height: 90px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+      animation: sway 3.5s ease-in-out infinite;
+    }
+    #flowerToken p {
+      font-family: 'Dancing Script', cursive;
+      font-size: 14px;
+      color: #d4b85c;
+      margin: 0;
+      text-align: center;
+      max-width: 280px;
+    }
+
+    #popupFragment {
+      font-family: 'Dancing Script', cursive;
+      color: #d4b85c;
+      font-size: 16px;
+      text-align: center;
+    }
+
+    .cardActions { display: flex; gap: 10px; justify-content: center; }
+    .cardActions button { margin: 0; }
+
+    #backBtn {
+      background: transparent;
+      border: 1.5px solid rgba(240,230,140,0.6);
+      color: #b8a63c;
+      font-family: 'Dancing Script', cursive;
+      font-size: 15px;
+      padding: 7px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin: 0 0 20px 0;
+    }
+    #backBtn:hover { background: rgba(107,142,107,0.1); }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-4deg) translateY(0); }
+      50%       { transform: rotate(4deg) translateY(-3px); }
+    }
+    @keyframes popBloom {
+      from { transform: scale(0.72); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+
+    /* ── Mobile adjustments ── */
+    @media (max-width: 480px) {
+      #cardDesign { height: 460px !important; }
+      .container  { padding: 22px 18px; }
+      #cardPopup  { gap: 10px; }
+      .closeBtn   { top: -14px; right: -2px; width: 32px; height: 32px; font-size: 18px; line-height: 32px; }
+    }
+
+  </style>
+</head>
+<body>
+<div class="card-page-wrapper">
+
+  <div class="container">
+    <h2>A trace of your poetry is held gently in the garden<br>Don't forget to collect your Florilegium card with a handmade stamp!</h2>
+    <div class="card">
+      <p id="cardEmotion"></p>
+      <p id="cardPrompt"></p>
+      <pre id="cardPoem"></pre>
+    </div>
+    <h3 id="gardenMessage"></h3>
+    <p id="fragment"></p>
+    <button onclick="openCardPopup()">Generate Card 🌸</button>
+  </div>
+
+  <div id="gardenSection">
+    <h3>the garden 🌿</h3>
+    <div id="gardenContainer">
+      <p class="garden-empty">your garden is waiting for its first bloom...</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- Popup overlay -->
+<div id="cardOverlay" class="hidden">
+  <div id="cardPopup">
+
+    <!-- Close button is a sibling of #cardDesign, NOT inside it -->
+    <button class="closeBtn" onclick="closeCard()">×</button>
+
+    <div id="cardDesign">
+      <img id="cardBg" src="images/floral_card.png" alt="card background">
+      <p id="popupPoem"></p>
+    </div>
+
+    <div id="flowerToken">
+      <img id="flowerTokenImg" src="" alt="your flower">
+    </div>
+
+    <div id="popupFragment"></div>
+
+    <div class="cardActions">
+      <button onclick="saveCard()">Save</button>
+      <button onclick="shareCard()">Share</button>
+    </div>
+
+    <button id="backBtn" onclick="closeCard()">← back to garden</button>
+
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
