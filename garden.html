@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Florilegium — the garden</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+
+    /* Full-page garden: identical bg structure to index.html */
+    body.garden-page {
+      background-image: url("images/page_desktopbg.png");
+      background-size: cover;
+      background-position: center top;
+      background-repeat: no-repeat;
+      background-color: #d8e4d0;
+      min-height: 100vh;
+      overflow: hidden;   /* flowers don't cause scroll */
+    }
+
+    @media (max-width: 768px) {
+      body.garden-page {
+        background-image: url("images/page_mobile.png");
+        background-position: center top;
+        overflow-y: auto; /* allow scroll if many flowers */
+      }
+    }
+
+    /* Garden title — floats gently at the top, unobtrusive */
+    #gardenTitle {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 15px;
+      color: rgba(59,74,47,0.7);
+      letter-spacing: 0.08em;
+      pointer-events: none;
+      z-index: 10;
+      white-space: nowrap;
+    }
+
+    /* Home button — minimal, bottom centre */
+    #homeBtn {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Dancing Script', cursive;
+      font-size: 15px;
+      color: rgba(59,74,47,0.75);
+      background: rgba(255,255,255,0.55);
+      border: 1px solid rgba(107,142,107,0.35);
+      border-radius: 20px;
+      padding: 7px 20px;
+      cursor: pointer;
+      z-index: 10;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s ease, transform 0.2s ease;
+      display: block;
+      margin: 0;
+    }
+    #homeBtn:hover {
+      background: rgba(255,255,255,0.78);
+      transform: translateX(-50%) scale(1.04);
+      box-shadow: none;
+    }
+
+    /* Loading message while DB fetches */
+    #gardenLoading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Dancing Script', cursive;
+      font-size: 18px;
+      color: rgba(59,74,47,0.6);
+      pointer-events: none;
+      z-index: 5;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Garden container — full page scatter */
+    #gardenContainer {
+      position: fixed !important;
+      inset: 0 !important;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* Individual flowers */
+    #gardenContainer .flower-item {
+      position: absolute !important;
+      pointer-events: auto;
+    }
+
+    /* Flowers slightly larger on the dedicated garden page */
+    #gardenContainer .flower-item img {
+      width: 68px !important;
+      height: 68px !important;
+    }
+
+    @media (max-width: 768px) {
+      #gardenContainer .flower-item img {
+        width: 52px !important;
+        height: 52px !important;
+      }
+      #gardenTitle { font-size: 13px; top: 14px; }
+      #homeBtn     { bottom: 20px; font-size: 14px; padding: 6px 16px; }
+    }
+
+  </style>
+</head>
+<body class="garden-page">
+
+  <div id="gardenTitle">a garden of poetic trace<br> hover or tap the flowers to read them</br></div>
+
+  <!-- Full-page scattered garden -->
+  <div id="gardenContainer"></div>
+
+  <!-- Floating ambient flowers (same as other pages) -->
+
+  <button id="homeBtn" onclick="window.location.href='index.html'">← return home</button>
+
+  <div id="gardenLoading">gathering the blooms...</div>
+
+  <script src="script.js"></script>
+  <script>
+    // Override: garden.html needs the scattered layout (isIndex logic in renderGarden)
+    // gardenSection does NOT exist on this page, so renderGarden auto-uses scatter mode.
+    // We just need to hide the loading message once flowers appear.
+
+    const _originalRender = renderGarden;
+
+    // Patch renderGarden to hide loading indicator after first render
+    window.renderGarden = function(garden, highlightLast) {
+      _originalRender(garden, highlightLast);
+      const loading = document.getElementById("gardenLoading");
+      if (loading) {
+        loading.style.opacity = "0";
+        setTimeout(() => loading.remove(), 500);
+      }
+    };
+  </script>
+</body>
+</html>
