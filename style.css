@@ -2,7 +2,6 @@
    FLORILEGIUM — style.css
    ═══════════════════════════════════════════ */
 
-/* ── Base ── */
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
@@ -42,7 +41,7 @@ body {
     0 0 0 1px rgba(255,255,255,0.5) inset;
 }
 
-/* ── Buttons ── */
+/* ── Buttons (global) ── */
 button {
   display: block;
   margin: 10px auto;
@@ -62,7 +61,7 @@ button:hover {
 }
 button:active { transform: scale(0.97); }
 
-/* ── Poem display box (card page) ── */
+/* ── Poem display box ── */
 .card {
   border: 1px solid rgba(107,142,107,0.25);
   padding: 20px;
@@ -81,7 +80,7 @@ pre {
   margin-top: 10px;
 }
 
-/* ── Home page layout (index.html uses .home-bg) ── */
+/* ── Home page layout ── */
 .home-bg {
   background-image: url("images/page_desktopbg.png");
   background-size: cover;
@@ -91,35 +90,30 @@ pre {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;   /* vertically centres container — no padding-top needed */
+  justify-content: center;
   align-items: center;
   padding: 60px 20px;
   overflow: hidden;
 }
 
-/* Container inside home-bg resets the global top margin */
 .home-bg .container {
   margin: 0 auto !important;
-  max-width: 480px;
-  width: 90%;
+  max-width: 420px;
+  width: 88%;
+  position: relative;
+  z-index: 2;
+  padding: 22px 28px;
 }
 
 /* ── Page fade-in ── */
-.page {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: all 0.6s ease;
-}
-.page.show {
-  opacity: 1;
-  transform: translateY(0);
-}
+.page { opacity: 0; transform: translateY(10px); transition: all 0.6s ease; }
+.page.show { opacity: 1; transform: translateY(0); }
 
 /* ── Hidden utility ── */
 .hidden { display: none !important; }
 
 /* ═══════════════════════════════════════════
-   DECORATIVE FLOATING FLOWERS
+   DECORATIVE FLOATING FLOWERS (ambient)
    ═══════════════════════════════════════════ */
 
 #floatingFlowers {
@@ -144,9 +138,7 @@ pre {
   100% { opacity: 0;    transform: translateY(-120px) rotate(var(--rot, 30deg)) scale(0.9); }
 }
 
-.float-flower:nth-child(odd) {
-  animation-name: floatUpLeft;
-}
+.float-flower:nth-child(odd) { animation-name: floatUpLeft; }
 @keyframes floatUpLeft {
   0%   { opacity: 0;   transform: translateY(100vh) translateX(0)    rotate(0deg) scale(0.6); }
   50%  { opacity: 0.4; transform: translateY(50vh)  translateX(-30px) rotate(var(--rot, 20deg)) scale(0.85); }
@@ -154,10 +146,9 @@ pre {
 }
 
 /* ═══════════════════════════════════════════
-   GARDEN
+   GARDEN — scattered (index + garden pages)
    ═══════════════════════════════════════════ */
 
-/* Scattered on index.html — absolute layer */
 #gardenContainer {
   position: absolute;
   inset: 0;
@@ -175,9 +166,7 @@ pre {
   animation: bloomIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-#gardenContainer .flower-item {
-  position: absolute;
-}
+#gardenContainer .flower-item { position: absolute; }
 
 .flower-item img {
   width: 58px;
@@ -194,12 +183,12 @@ pre {
 }
 
 .flower-item:hover img {
-  transform: scale(1.25) translateY(-6px) rotate(0deg) !important;
+  transform: scale(1.28) translateY(-6px) rotate(0deg) !important;
   filter: drop-shadow(0 8px 16px rgba(0,0,0,0.2));
   animation-play-state: paused;
 }
 
-/* Tooltip — only on hover */
+/* Tooltip — hover only, shows emotion + fragment */
 .flower-tooltip {
   position: absolute;
   bottom: calc(100% + 10px);
@@ -213,7 +202,7 @@ pre {
   line-height: 1.55;
   padding: 9px 13px;
   border-radius: 9px;
-  width: 190px;
+  width: 200px;
   text-align: center;
   pointer-events: none;
   opacity: 0;
@@ -232,7 +221,7 @@ pre {
 }
 .flower-item:hover .flower-tooltip { opacity: 1; }
 
-/* Emotion label — hidden on index, visible in card grid */
+/* Emotion label — hidden by default */
 .flower-label { display: none; }
 
 .flower-item.just-planted img {
@@ -252,7 +241,7 @@ pre {
   to   { opacity: 1; transform: scale(1)    translateY(0); }
 }
 
-/* Grid garden on card.html — fires only inside #gardenSection */
+/* ── Card page grid (inside #gardenSection) ── */
 #gardenSection #gardenContainer {
   position: static !important;
   display: grid !important;
@@ -273,10 +262,7 @@ pre {
   top: unset !important;
 }
 
-#gardenSection #gardenContainer .flower-item img {
-  width: 80px;
-  height: 80px;
-}
+#gardenSection #gardenContainer .flower-item img { width: 80px; height: 80px; }
 
 #gardenSection .flower-label {
   display: block;
@@ -321,13 +307,11 @@ pre {
 
 .closeBtn {
   position: absolute;
-  top: -16px;
-  right: -4px;
+  top: -16px; right: -4px;
   background: #fff;
   border-radius: 50%;
   border: none;
-  width: 36px;
-  height: 36px;
+  width: 36px; height: 36px;
   font-size: 20px;
   line-height: 36px;
   text-align: center;
@@ -378,17 +362,22 @@ pre {
   position: absolute;
   inset: 0;
   z-index: 2;
-  padding: 52px 32px 32px;
+  padding: 80px 36px 36px 36px;
   color: #2a3820;
   font-family: 'Playfair Display', serif;
   font-size: 13.5px;
-  line-height: 1.9;
-  white-space: pre-wrap;
+  line-height: 1.7;
+  text-align: left;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  text-align: center;
+  align-items: flex-start;
   overflow: hidden;
+}
+
+#popupPoem span {
+  display: inline;
+  white-space: pre;
 }
 
 #flowerToken {
@@ -398,8 +387,7 @@ pre {
   gap: 6px;
 }
 #flowerTokenImg {
-  width: 88px;
-  height: 88px;
+  width: 88px; height: 88px;
   object-fit: contain;
   filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
   animation: sway 3.5s ease-in-out infinite;
@@ -407,7 +395,7 @@ pre {
 #flowerToken p {
   font-family: 'Dancing Script', cursive;
   font-size: 14px;
-  color: #6b8e6b;
+  color: #f0e68c;
   margin: 0;
   text-align: center;
   max-width: 280px;
@@ -415,27 +403,15 @@ pre {
 
 #popupFragment {
   font-family: 'Dancing Script', cursive;
-  color: #4a6741;
-  font-size: 16px;
+  color: #f0e68c;
+  font-size: 15px;
   text-align: center;
+  max-width: 300px;
+  line-height: 1.5;
 }
 
 .cardActions { display: flex; gap: 10px; justify-content: center; }
 .cardActions button { margin: 0; }
-
-#backBtn {
-  background: transparent;
-  border: 1.5px solid rgba(107,142,107,0.6);
-  color: #5a7a5a;
-  font-family: 'Dancing Script', cursive;
-  font-size: 15px;
-  padding: 7px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin: 0 0 16px 0;
-}
-#backBtn:hover { background: rgba(107,142,107,0.1); }
 
 @keyframes sway {
   0%, 100% { transform: rotate(-4deg) translateY(0); }
@@ -447,66 +423,64 @@ pre {
 }
 
 /* ═══════════════════════════════════════════
-   MOBILE — single consolidated block
+   MOBILE
    ═══════════════════════════════════════════ */
 @media (max-width: 768px) {
 
-  /* Home page: switch to portrait bg, keep flex centering */
   .home-bg {
     background-image: url("images/page_mobile.png");
     background-position: center top;
     justify-content: center;
     padding: 40px 16px;
-    /* NO padding-top override — justify-content:center handles position */
   }
 
-  /* Home container: no top margin, just horizontal padding */
   .home-bg .container {
     margin: 0 16px !important;
     width: auto;
+    max-width: none;
+    padding: 18px 20px;
   }
 
-  /* All other containers: modest top margin */
   .container {
     margin: 40px 16px 30px !important;
     padding: 22px 18px;
     width: auto;
   }
 
-  /* Floating flowers: subtler on mobile */
   .float-flower { opacity: 0.3 !important; }
 
-  /* Garden grid */
   #gardenSection #gardenContainer {
     grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
     gap: 16px;
     padding: 18px;
   }
 
-  /* Flower sizes */
-  .flower-item img                            { width: 48px; height: 48px; }
-  #gardenSection #gardenContainer .flower-item img { width: 68px; height: 68px; }
+  .flower-item img                                  { width: 48px; height: 48px; }
+  #gardenSection #gardenContainer .flower-item img  { width: 68px; height: 68px; }
 
-  /* Tooltip */
   .flower-tooltip { width: 150px; font-size: 11px; padding: 7px 10px; }
 
-  /* Card popup */
-  #cardDesign  { height: 460px; }
+  #cardDesign  { height: 480px; }
   #cardPopup   { max-width: 92vw; gap: 10px; }
-  #popupPoem   { font-size: 12px !important; padding: 40px 20px 20px !important; }
-  .closeBtn    { width: 30px; height: 30px; font-size: 17px; line-height: 30px; top: -13px; right: -2px; }
 
-  /* Action buttons row */
+  #popupPoem {
+    padding: 56px 20px 20px;
+    font-size: clamp(11px, 3.5vw, 14px);
+    line-height: 1.25 !important;
+    overflow-y: auto;
+    max-height: 100%;
+  }
+
+  .closeBtn { width: 30px; height: 30px; font-size: 17px; line-height: 30px; top: -13px; right: -2px; }
+
   .cardActions { flex-direction: row; gap: 8px; }
   .cardActions button { padding: 10px 16px; font-size: 14px; }
 
-  /* Write page textarea */
   textarea { width: 100% !important; font-size: 15px; }
 }
 
-/* ── Very small screens (iPhone SE, 375px) ── */
 @media (max-width: 390px) {
-  .home-bg .container { width: 95%; padding: 18px 14px; }
+  .home-bg .container { width: 95%; padding: 16px 14px; }
   #cardDesign          { height: 400px; }
-  #popupPoem           { font-size: 11px !important; }
+  #popupPoem           { font-size: 11px !important; padding: 60px 18px 18px 18px !important; }
 }
