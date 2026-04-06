@@ -122,7 +122,7 @@
   <!-- Full-page scattered garden -->
   <div id="gardenContainer"></div>
 
-  <!-- Floating ambient flowers (same as other pages) -->
+  <!-- Floating ambient flowers  -->
 
   <button id="homeBtn" onclick="window.location.href='index.html'">← return home</button>
 
@@ -130,9 +130,7 @@
 
   <script src="script.js"></script>
   <script>
-    // Override: garden.html needs the scattered layout (isIndex logic in renderGarden)
-    // gardenSection does NOT exist on this page, so renderGarden auto-uses scatter mode.
-    // We just need to hide the loading message once flowers appear.
+
 
     const _originalRender = renderGarden;
 
