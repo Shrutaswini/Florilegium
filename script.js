@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // ── Ambient floating flowers (all pages) ─────
 function spawnFloatingFlowers() {
-  // Don't spawn on garden.html — the flowers there ARE the content
+  
   if (window.location.pathname.endsWith("garden.html")) return;
 
   const layer = document.createElement("div");
@@ -173,7 +173,7 @@ function validatePoem() {
 }
 
 // ── Card page ─────────────────────────────────
-// FIX: guard against literal string "null" from URL params
+
 function loadCardPage() {
   const params     = new URLSearchParams(window.location.search);
   const emotionRaw = params.get("emotion");
@@ -204,7 +204,7 @@ function loadCardPage() {
 }
 
 // ── Open card popup ───────────────────────────
-// FIX: guard emotion + strip stray "null" tokens from fragment
+
 async function openCardPopup() {
   const params      = new URLSearchParams(window.location.search);
   const poem        = params.get("poem") ? decodeURIComponent(params.get("poem")) : "";
@@ -212,7 +212,7 @@ async function openCardPopup() {
   const emotion     = (!emotionRaw || emotionRaw === "null") ? "Unknown" : emotionRaw;
   const fragmentEl  = document.getElementById("fragment");
   const fragmentRaw = fragmentEl ? (fragmentEl.dataset.raw || fragmentEl.innerText).trim() : "";
-  // Strip any literal "null" tokens that crept in from URL params
+ 
   const fragment = fragmentRaw
     .replace(/\bnull\b/gi, "")
     .replace(/\s+\/\s+\/\s+/g, " / ")
@@ -234,7 +234,7 @@ async function openCardPopup() {
 }
 
 // ── Render poem lines with <br> tags ──────────
-// Fixes html2canvas white-space:pre-wrap collapse bug
+
 function renderPoemToCard(poem) {
   const poemEl = document.getElementById("popupPoem");
   poemEl.innerHTML = "";
@@ -316,7 +316,7 @@ async function loadGardenFromDB() {
 }
 
 // ── Render garden ─────────────────────────────
-// FIX: filter out rows where emotion or fragment is null/empty/"null"
+
 function renderGarden(garden, highlightLast = false) {
   const container = document.getElementById("gardenContainer");
   if (!container) return;
